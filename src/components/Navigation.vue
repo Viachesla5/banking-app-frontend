@@ -10,8 +10,8 @@
         </router-link>
         <ul class="navbar-nav ms-auto">
           <li class="nav-item">
-            <router-link to="/Register" class="nav-link">
-              Register
+            <router-link to="/Overview" class="nav-link">
+             Overview
             </router-link>
           </li>
           <li v-if="store.isLoggedIn" class="nav-item">
