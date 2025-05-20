@@ -29,9 +29,17 @@
               type="button"
               class="btn btn-success"
               @click="$router.push('/login')"
-              style="margin: 2px 30px"
+              style="margin: 2px 10px"
             >
               Login
+            </button>
+            <button
+              type="button"
+              class="btn btn-primary"
+              @click="$router.push('/register')"
+              style="margin: 2px 10px"
+            >
+              Register
             </button>
           </li>
         </ul>

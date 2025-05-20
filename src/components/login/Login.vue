@@ -25,6 +25,10 @@
         >
           Login</button
         ><br /><br />
+        <p>
+          Don't have an account?
+          <router-link to="/register">Register here</router-link>
+        </p>
       </div>
     </div>
   </div>
