@@ -4,12 +4,16 @@ import Home from "../components/HomePage.vue";
 import Login from "../components/login/Login.vue";
 import Overview from "../components/overview/Overview.vue";
 import Register from "../components/login/Register.vue";
+import AccountDetails from "../components/account/AccountDetails.vue";
+import TransactionHistory from "../components/account/TransactionHistory.vue";
 
 const routes = [
   { path: "/", component: Home },
   { path: "/login", component: Login },
   { path: "/register", component: Register },
   { path: "/Overview", component: Overview },
+  { path: "/account-details", component: AccountDetails },
+  { path: "/transactions", component: TransactionHistory },
 ];
 
 const router = createRouter({

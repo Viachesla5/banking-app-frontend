@@ -15,6 +15,16 @@
             </router-link>
           </li>
           <li v-if="store.isLoggedIn" class="nav-item">
+            <router-link to="/account-details" class="nav-link">
+              Account Details
+            </router-link>
+          </li>
+          <li v-if="store.isLoggedIn" class="nav-item">
+            <router-link to="/transactions" class="nav-link">
+              Transaction History
+            </router-link>
+          </li>
+          <li v-if="store.isLoggedIn" class="nav-item">
             <button
               type="button"
               class="btn btn-danger"
