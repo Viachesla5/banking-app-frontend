@@ -66,7 +66,9 @@ import { useUserSessionStore } from "../store/userSessionStore";
 export default {
   name: "AccountDetails",
   setup() {
-    return { store: useUserSessionStore() };
+    return { 
+      store: useUserSessionStore()
+    };
   },
   data() {
     return {

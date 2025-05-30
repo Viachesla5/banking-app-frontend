@@ -25,6 +25,16 @@
             </router-link>
           </li>
           <li v-if="store.isLoggedIn" class="nav-item">
+            <router-link to="/transfer" class="nav-link">
+              Transfer Funds
+            </router-link>
+          </li>
+          <li v-if="store.isLoggedIn" class="nav-item">
+            <router-link to="/atm-operations" class="nav-link">
+              ATM Operations
+            </router-link>
+          </li>
+          <li v-if="store.isLoggedIn" class="nav-item">
             <button
               type="button"
               class="btn btn-danger"
@@ -75,7 +85,7 @@ export default {
   methods: {
     logout() {
       this.store.logout();
-    },
+    }
   },
 };
 </script>
