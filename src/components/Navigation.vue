@@ -9,7 +9,7 @@
           <h1>Home</h1>
         </router-link>
         <ul class="navbar-nav ms-auto">
-          <li class="nav-item">
+          <li v-if="store.isLoggedIn" class="nav-item">
             <router-link to="/Overview" class="nav-link">
               Overview
             </router-link>

@@ -8,6 +8,8 @@ import AccountDetails from "../components/account/AccountDetails.vue";
 import TransactionHistory from "../components/account/TransactionHistory.vue";
 import TransferFunds from "../components/account/TransferFunds.vue";
 import AtmOperations from "../components/account/AtmOperations.vue";
+import NotFound from "../components/ErroPages/NotFound.vue";
+import Unauthorized from "../components/ErroPages/Unauthorized.vue";
 
 const routes = [
   { path: "/", component: Home },
@@ -18,11 +20,41 @@ const routes = [
   { path: "/transactions", component: TransactionHistory },
   { path: "/transfer", component: TransferFunds },
   { path: "/atm-operations", component: AtmOperations },
+  { path: "/NotFound", component: NotFound },
+  { path: "/Unauthorized", component: Unauthorized },
 ];
-
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: routes,
+});
+
+router.beforeEach((to, from, next) => {
+  const token = localStorage.getItem("token");
+  const role = localStorage.getItem("role");
+
+  // Define which paths require auth and what role they require
+  const protectedRoutes = {
+    "/Overview": "ROLE_CUSTOMER",
+  };
+
+  const requiredRole = protectedRoutes[to.path];
+
+  // If the route is protected
+  if (requiredRole) {
+    if (!token) {
+      // User is not logged in
+      next("NotFound");
+    } else if (role !== requiredRole) {
+      // Logged in but wrong role
+      next("/Unauthorized");
+    } else {
+      // Logged in and correct role
+      next();
+    }
+  } else {
+    // Public route
+    next();
+  }
 });
 
 export default router;
