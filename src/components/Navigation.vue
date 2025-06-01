@@ -6,7 +6,7 @@
     >
       <div class="container">
         <router-link to="/" class="navbar-brand">
-          <h1>Home</h1>
+          <h5>Home</h5>
         </router-link>
         <ul class="navbar-nav ms-auto">
           <li v-if="store.isLoggedIn" class="nav-item">
