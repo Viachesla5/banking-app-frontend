@@ -34,7 +34,7 @@ export const useUserSessionStore = defineStore("userSessionStore", {
         Axios.post("/auth/login", { username: username, password: password })
           .then((response) => {
             const tokenPayload = VueJwtDecode.decode(response.data.token);
-            this.role = tokenPayload.auth;
+            this.role = tokenPayload.role;
 
             this.userId = tokenPayload.jti;
 
@@ -42,7 +42,7 @@ export const useUserSessionStore = defineStore("userSessionStore", {
 
             localStorage.setItem("token", response.data.token);
             console.log("role" + this.role);
-            localStorage.setItem("role", tokenPayload.auth);
+            localStorage.setItem("role", tokenPayload.role);
             localStorage.setItem("userId", tokenPayload.jti);
             Axios.defaults.headers.common["Authorization"] =
               "Bearer " + response.data.token;
