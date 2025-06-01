@@ -8,15 +8,27 @@
         <!-- Filters -->
         <div class="row mb-4">
           <div class="col-md-3">
-            <select v-model="selectedAccount" class="form-select" @change="fetchTransactions">
+            <select
+              v-model="selectedAccount"
+              class="form-select"
+              @change="fetchTransactions"
+            >
               <option value="">All Accounts</option>
-              <option v-for="account in accounts" :key="account.iban" :value="account.iban">
+              <option
+                v-for="account in accounts"
+                :key="account.iban"
+                :value="account.iban"
+              >
                 {{ account.accountType }} - {{ account.iban }}
               </option>
             </select>
           </div>
           <div class="col-md-3">
-            <select v-model="selectedType" class="form-select" @change="fetchTransactions">
+            <select
+              v-model="selectedType"
+              class="form-select"
+              @change="fetchTransactions"
+            >
               <option value="">All Types</option>
               <option value="TRANSFER">Transfer</option>
               <option value="DEPOSIT">Deposit</option>
@@ -49,13 +61,13 @@
                 <th @click="sortBy('date')" class="sortable">
                   Date
                   <span v-if="sortKey === 'date'" class="sort-icon">
-                    {{ sortOrder === 'asc' ? '↑' : '↓' }}
+                    {{ sortOrder === "asc" ? "↑" : "↓" }}
                   </span>
                 </th>
                 <th @click="sortBy('type')" class="sortable">
                   Type
                   <span v-if="sortKey === 'type'" class="sort-icon">
-                    {{ sortOrder === 'asc' ? '↑' : '↓' }}
+                    {{ sortOrder === "asc" ? "↑" : "↓" }}
                   </span>
                 </th>
                 <th>From Account</th>
@@ -63,14 +75,17 @@
                 <th @click="sortBy('amount')" class="sortable">
                   Amount
                   <span v-if="sortKey === 'amount'" class="sort-icon">
-                    {{ sortOrder === 'asc' ? '↑' : '↓' }}
+                    {{ sortOrder === "asc" ? "↑" : "↓" }}
                   </span>
                 </th>
                 <th>Description</th>
               </tr>
             </thead>
             <tbody>
-              <tr v-for="transaction in sortedTransactions" :key="transaction.id">
+              <tr
+                v-for="transaction in sortedTransactions"
+                :key="transaction.id"
+              >
                 <td>{{ formatDate(transaction.date) }}</td>
                 <td>
                   <span :class="getTransactionTypeClass(transaction.type)">
@@ -102,7 +117,7 @@
 
 <script>
 import axios from "../../Axios-auth";
-import { useUserSessionStore } from "../store/userSessionStore";
+import { useUserSessionStore } from "/src/store/userSessionStore";
 
 export default {
   name: "TransactionHistory",
@@ -159,12 +174,15 @@ export default {
       this.loading = true;
       try {
         const params = new URLSearchParams();
-        if (this.selectedAccount) params.append("account", this.selectedAccount);
+        if (this.selectedAccount)
+          params.append("account", this.selectedAccount);
         if (this.selectedType) params.append("type", this.selectedType);
         if (this.startDate) params.append("startDate", this.startDate);
         if (this.endDate) params.append("endDate", this.endDate);
 
-        const response = await axios.get(`/api/transactions?${params.toString()}`);
+        const response = await axios.get(
+          `/api/transactions?${params.toString()}`
+        );
         this.transactions = response.data;
       } catch (error) {
         console.error("Error fetching transactions:", error);
@@ -241,4 +259,5 @@ export default {
     margin-bottom: 10px;
   }
 }
-</style> 
+</style>
+../../store/userSessionStore

@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import Axios from "../../Axios-auth";
+import Axios from "../Axios-auth";
 
 export const useUserSessionStore = defineStore("userSessionStore", {
   state: () => ({
@@ -13,7 +13,7 @@ export const useUserSessionStore = defineStore("userSessionStore", {
   actions: {
     login(username, password) {
       return new Promise((resolve, reject) => {
-        Axios.post("/login", { username: username, password: password })
+        Axios.post("/auth/login", { username: username, password: password })
           .then((response) => {
             this.username = response.data.username;
             resolve(response);

@@ -36,7 +36,7 @@
 <script>
 import "../../assets/main.css";
 import axios from "../../Axios-auth";
-import { useUserSessionStore } from "../store/userSessionStore";
+import { useUserSessionStore } from "/src/store/userSessionStore";
 
 export default {
   setup() {
@@ -65,3 +65,4 @@ export default {
 </script>
 
 <style lang="scss" scoped></style>
+../../store/userSessionStore

@@ -9,7 +9,10 @@
           </div>
           <div class="card-body">
             <div v-if="customerInfo" class="customer-info">
-              <p><strong>Name:</strong> {{ customerInfo.firstName }} {{ customerInfo.lastName }}</p>
+              <p>
+                <strong>Name:</strong> {{ customerInfo.firstName }}
+                {{ customerInfo.lastName }}
+              </p>
               <p><strong>Email:</strong> {{ customerInfo.email }}</p>
               <p><strong>Phone:</strong> {{ customerInfo.phoneNumber }}</p>
               <p><strong>BSN:</strong> {{ customerInfo.bsn }}</p>
@@ -61,7 +64,7 @@
 
 <script>
 import axios from "../../Axios-auth";
-import { useUserSessionStore } from "../store/userSessionStore";
+import { useUserSessionStore } from "/src/store/userSessionStore";
 
 export default {
   name: "AccountDetails",
@@ -128,4 +131,5 @@ export default {
 .table th {
   border-top: none;
 }
-</style> 
+</style>
+../../store/userSessionStore

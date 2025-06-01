@@ -11,7 +11,7 @@
         <ul class="navbar-nav ms-auto">
           <li class="nav-item">
             <router-link to="/Overview" class="nav-link">
-             Overview
+              Overview
             </router-link>
           </li>
           <li v-if="store.isLoggedIn" class="nav-item">
@@ -59,7 +59,7 @@
 </template>
 
 <script>
-import { useUserSessionStore } from "./store/userSessionStore";
+import { useUserSessionStore } from "/src/store/userSessionStore";
 
 export default {
   name: "Navbar",

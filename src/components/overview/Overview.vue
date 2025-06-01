@@ -38,7 +38,7 @@ import { ref, computed, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import axios from "../../Axios-auth";
 import "../../assets/main.css";
-import { useUserSessionStore } from "../store/userSessionStore";
+import { useUserSessionStore } from "/src/store/userSessionStore";
 
 const router = useRouter();
 const userSession = useUserSessionStore();
@@ -84,3 +84,4 @@ onMounted(fetchData);
   margin-left: 10%;
 }
 </style>
+../../store/userSessionStore
