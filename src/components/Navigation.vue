@@ -8,6 +8,14 @@
         <router-link to="/" class="navbar-brand">
           <h5>Home</h5>
         </router-link>
+        <button
+          type="button"
+          class="btn btn-success"
+          @click="$router.push('/loginATM')"
+          style="margin: 2px 10px"
+        >
+          Login ATM
+        </button>
         <ul class="navbar-nav ms-auto">
           <li v-if="store.isLoggedIn" class="nav-item">
             <router-link to="/Overview" class="nav-link">

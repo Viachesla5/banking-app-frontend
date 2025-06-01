@@ -10,6 +10,7 @@ import TransferFunds from "../components/account/TransferFunds.vue";
 import AtmOperations from "../components/account/AtmOperations.vue";
 import NotFound from "../components/ErroPages/NotFound.vue";
 import Unauthorized from "../components/ErroPages/Unauthorized.vue";
+import LoginATM from "../components/login/LoginATM.vue";
 
 const routes = [
   { path: "/", component: Home },
@@ -22,6 +23,7 @@ const routes = [
   { path: "/atm-operations", component: AtmOperations },
   { path: "/NotFound", component: NotFound },
   { path: "/Unauthorized", component: Unauthorized },
+  { path: "/loginATM", component: LoginATM },
 ];
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
