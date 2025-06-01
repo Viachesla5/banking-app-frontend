@@ -29,6 +29,12 @@
           Don't have an account?
           <router-link to="/register">Register here</router-link>
         </p>
+        <div
+          v-if="errorMessage"
+          class="alert alert-danger mt-3 d-flex justify-content-center"
+        >
+          {{ errorMessage }}
+        </div>
       </div>
     </div>
   </div>
@@ -47,6 +53,7 @@ export default {
     return {
       username: "",
       password: "",
+      errorMessage: "",
     };
   },
   methods: {
@@ -54,15 +61,21 @@ export default {
       this.store
         .login(this.username, this.password)
         .then(() => {
-          this.$router.push("/");
+          this.$router.push("/Overview");
         })
         .catch((error) => {
           console.log(error);
+
+          this.errorMessage =
+            "Username or password is incorrect, please try again!";
         });
     },
   },
 };
 </script>
 
-<style lang="scss" scoped></style>
-../../store/userSessionStore
+<style scoped>
+.container {
+  margin-bottom: 12%;
+}
+</style>

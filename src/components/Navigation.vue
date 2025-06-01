@@ -6,7 +6,7 @@
     >
       <div class="container">
         <router-link to="/" class="navbar-brand">
-          <font>Home</font>
+          <h1>Home</h1>
         </router-link>
         <ul class="navbar-nav ms-auto">
           <li class="nav-item">
@@ -85,7 +85,7 @@ export default {
   methods: {
     logout() {
       this.store.logout();
-    }
+    },
   },
 };
 </script>
