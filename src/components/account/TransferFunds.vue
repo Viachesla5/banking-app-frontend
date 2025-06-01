@@ -21,7 +21,9 @@
                 :key="account.iban"
                 :value="account.iban"
               >
-                {{ account.accountType }} - {{ account.iban }} (Balance: €{{ account.balance.toFixed(2) }})
+                {{ account.accountType }} - {{ account.iban }} (Balance: €{{
+                  account.balance.toFixed(2)
+                }})
               </option>
             </select>
           </div>
@@ -81,12 +83,8 @@
           </div>
 
           <!-- Submit Button -->
-          <button
-            type="submit"
-            class="btn btn-primary"
-            :disabled="loading"
-          >
-            {{ loading ? 'Processing...' : 'Transfer' }}
+          <button type="submit" class="btn btn-primary" :disabled="loading">
+            {{ loading ? "Processing..." : "Transfer" }}
           </button>
         </form>
       </div>
@@ -96,13 +94,13 @@
 
 <script>
 import axios from "../../Axios-auth";
-import { useUserSessionStore } from "../store/userSessionStore";
+import { useUserSessionStore } from "/src/store/userSessionStore";
 
 export default {
   name: "TransferFunds",
   setup() {
-    return { 
-      store: useUserSessionStore()
+    return {
+      store: useUserSessionStore(),
     };
   },
   data() {
@@ -140,18 +138,21 @@ export default {
           fromIban: this.fromAccount,
           toIban: this.toAccount,
           amount: parseFloat(this.amount),
-          description: this.description
+          description: this.description,
         };
 
-        const response = await axios.post("/api/transactions/transfer", request);
+        const response = await axios.post(
+          "/api/transactions/transfer",
+          request
+        );
         this.success = response.data;
-        
+
         // Reset form
         this.fromAccount = "";
         this.toAccount = "";
         this.amount = null;
         this.description = "";
-        
+
         // Refresh account balances
         await this.fetchUserAccounts();
       } catch (error) {
@@ -196,4 +197,4 @@ export default {
 .input-group-text {
   background-color: #f8f9fa;
 }
-</style> 
+</style>

@@ -28,7 +28,9 @@
               v-model="operationType"
               autocomplete="off"
             />
-            <label class="btn btn-outline-primary" for="withdraw">Withdraw</label>
+            <label class="btn btn-outline-primary" for="withdraw"
+              >Withdraw</label
+            >
           </div>
         </div>
 
@@ -48,7 +50,9 @@
                 :key="account.iban"
                 :value="account.iban"
               >
-                {{ account.accountType }} - {{ account.iban }} (Balance: €{{ account.balance.toFixed(2) }})
+                {{ account.accountType }} - {{ account.iban }} (Balance: €{{
+                  account.balance.toFixed(2)
+                }})
               </option>
             </select>
           </div>
@@ -103,7 +107,13 @@
             :class="operationType === 'deposit' ? 'btn-success' : 'btn-danger'"
             :disabled="loading"
           >
-            {{ loading ? 'Processing...' : operationType === 'deposit' ? 'Deposit' : 'Withdraw' }}
+            {{
+              loading
+                ? "Processing..."
+                : operationType === "deposit"
+                ? "Deposit"
+                : "Withdraw"
+            }}
           </button>
         </form>
       </div>
@@ -113,13 +123,13 @@
 
 <script>
 import axios from "../../Axios-auth";
-import { useUserSessionStore } from "../store/userSessionStore";
+import { useUserSessionStore } from "/src/store/userSessionStore";
 
 export default {
   name: "AtmOperations",
   setup() {
-    return { 
-      store: useUserSessionStore()
+    return {
+      store: useUserSessionStore(),
     };
   },
   data() {
@@ -157,18 +167,21 @@ export default {
           amount: parseFloat(this.amount),
         };
 
-        if (this.operationType === 'deposit') {
+        if (this.operationType === "deposit") {
           request.toIban = this.selectedAccount;
         } else {
           request.fromIban = this.selectedAccount;
         }
 
-        const response = await axios.post("/api/transactions/atm/transaction", request);
+        const response = await axios.post(
+          "/api/transactions/atm/transaction",
+          request
+        );
         this.success = response.data;
-        
+
         // Reset form
         this.amount = null;
-        
+
         // Refresh account balances
         await this.fetchUserAccounts();
       } catch (error) {
@@ -227,10 +240,10 @@ export default {
   .btn-group {
     flex-wrap: wrap;
   }
-  
+
   .btn-group .btn {
     flex: 1 1 45%;
     margin: 2px;
   }
 }
-</style> 
+</style>
