@@ -8,6 +8,7 @@ export const useUserSessionStore = defineStore("userSessionStore", {
     username: "",
     token: "",
     role: "",
+    isATM: false,
   }),
   getters: {
     isLoggedIn: (state) => {
@@ -26,10 +27,11 @@ export const useUserSessionStore = defineStore("userSessionStore", {
         this.token = localStorage.getItem("token");
         this.role = localStorage.getItem("role");
         this.userId = localStorage.getItem("userId");
+        this.isATM = localStorage.getItem("isATM") === "true";
         Axios.defaults.headers.common["Authorization"] = "Bearer " + this.token;
       }
     },
-    login(username, password) {
+    login(username, password, isATM = false) {
       return new Promise((resolve, reject) => {
         Axios.post("/auth/login", { username: username, password: password })
           .then((response) => {
@@ -39,11 +41,13 @@ export const useUserSessionStore = defineStore("userSessionStore", {
             this.userId = tokenPayload.jti;
 
             this.token = response.data.token;
+            this.isATM = isATM;
 
             localStorage.setItem("token", response.data.token);
             console.log("role" + this.role);
             localStorage.setItem("role", tokenPayload.role);
             localStorage.setItem("userId", tokenPayload.jti);
+            localStorage.setItem("isATM", isATM); // Persist across refresh
             Axios.defaults.headers.common["Authorization"] =
               "Bearer " + response.data.token;
             resolve(response);
