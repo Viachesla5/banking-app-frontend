@@ -11,7 +11,7 @@
 
       <form @submit.prevent="login">
         <div class="mb-3">
-          <label for="username" class="form-label atm-label">Card Number</label>
+          <label for="username" class="form-label atm-label">Username</label>
           <input
             v-model="username"
             type="text"
@@ -22,7 +22,7 @@
         </div>
 
         <div class="mb-3">
-          <label for="password" class="form-label atm-label">PIN</label>
+          <label for="password" class="form-label atm-label">Password</label>
           <input
             v-model="password"
             type="password"
