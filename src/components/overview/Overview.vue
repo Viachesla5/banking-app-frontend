@@ -1,5 +1,50 @@
 <template>
   <div class="container mt-5">
+    <div class="search-section mb-5">
+      <h3>Find IBANs by Customer Name</h3>
+      <form @submit.prevent="searchByName">
+        <div class="row mb-3">
+          <div class="col">
+            <input
+              v-model="searchFirstName"
+              type="text"
+              class="form-control"
+              placeholder="First Name"
+              required
+            />
+          </div>
+          <div class="col">
+            <input
+              v-model="searchLastName"
+              type="text"
+              class="form-control"
+              placeholder="Last Name"
+              required
+            />
+          </div>
+          <div class="col-auto">
+            <button type="submit" class="btn btn-primary">Search</button>
+          </div>
+        </div>
+      </form>
+
+      <div v-if="searchLoading">Searching...</div>
+      <div v-if="searchError" class="alert alert-danger">{{ searchError }}</div>
+
+      <div v-if="searchResults.length">
+        <h5>Found Accounts:</h5>
+        <ul class="list-group">
+          <li
+            v-for="account in searchResults"
+            :key="account.iban"
+            class="list-group-item"
+          >
+            {{ formatType(account.bankAccountType) }} - IBAN: {{ account.iban }}
+          </li>
+        </ul>
+      </div>
+    </div>
+
     <h2 class="mb-4">Your Bank Accounts</h2>
 
     <div v-if="loading">Loading accounts...</div>
@@ -7,7 +52,6 @@
     <div v-else-if="errorMessage" class="alert alert-danger">
       {{ errorMessage }}
     </div>
-
     <div v-else>
       <div
         v-for="account in accounts"
@@ -122,6 +166,11 @@ export default {
       accounts: [],
       errorMessage: "",
       loading: true,
+      searchFirstName: "",
+      searchLastName: "",
+      searchResults: [],
+      searchLoading: false,
+      searchError: "",
 
       // Transfer form state
       transfer: {
@@ -145,6 +194,7 @@ export default {
         .toLowerCase()
         .replace(/\b\w/g, (c) => c.toUpperCase());
     },
+
     async fetchAccounts() {
       const store = useUserSessionStore();
       try {
@@ -166,6 +216,7 @@ export default {
         this.loading = false;
       }
     },
+
     async submitTransfer() {
       this.transferError = "";
       this.transferSuccess = "";
@@ -212,6 +263,30 @@ export default {
           error.response?.data?.message || "Transfer failed. Please try again.";
       } finally {
         this.transferLoading = false;
+      }
+    },
+
+    async searchByName() {
+      this.searchLoading = true;
+      this.searchError = "";
+      this.searchResults = [];
+      const store = useUserSessionStore();
+      try {
+        const response = await axios.get("/accounts/search", {
+          params: {
+            firstName: this.searchFirstName,
+            lastName: this.searchLastName,
+          },
+          headers: {
+            Authorization: `Bearer ${store.token}`,
+          },
+        });
+        this.searchResults = response.data;
+      } catch (error) {
+        this.searchError =
+          error.response?.data?.message || "Failed to search accounts.";
+      } finally {
+        this.searchLoading = false;
       }
     },
   },
