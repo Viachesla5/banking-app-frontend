@@ -217,9 +217,9 @@
             <div class="transaction-amount">
               <span 
                 class="amount-value" 
-                :class="getAmountClass(transaction.amount)"
+                :class="getAmountClass(transaction)"
               >
-                {{ transaction.amount >= 0 ? '+' : '-' }}€{{ Math.abs(transaction.amount).toFixed(2) }}
+                {{ getAmountDisplay(transaction) }}
                   </span>
         </div>
         </div>
@@ -446,11 +446,35 @@ export default {
         'type-transfer': type === 'TRANSFER',
       };
     },
-    getAmountClass(amount) {
+    getAmountClass(transaction) {
+      // Withdrawals should always be red (negative styling)
+      if (transaction.type === 'WITHDRAWAL') {
+        return { 'amount-negative': true };
+      }
+      // Deposits should always be green (positive styling)
+      if (transaction.type === 'DEPOSIT') {
+        return { 'amount-positive': true };
+      }
+      // For transfers, use the actual amount sign
       return {
-        'amount-positive': amount > 0,
-        'amount-negative': amount < 0,
+        'amount-positive': transaction.amount > 0,
+        'amount-negative': transaction.amount < 0,
       };
+    },
+    getAmountDisplay(transaction) {
+      const amount = Math.abs(transaction.amount);
+      
+      // Withdrawals should always show with minus sign
+      if (transaction.type === 'WITHDRAWAL') {
+        return `-€${amount.toFixed(2)}`;
+      }
+      // Deposits should always show with plus sign
+      if (transaction.type === 'DEPOSIT') {
+        return `+€${amount.toFixed(2)}`;
+      }
+      // For transfers, use the actual amount sign
+      const sign = transaction.amount >= 0 ? '+' : '-';
+      return `${sign}€${amount.toFixed(2)}`;
     },
     clearFilters() {
       this.selectedAccount = '';
