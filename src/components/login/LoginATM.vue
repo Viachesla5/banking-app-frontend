@@ -53,7 +53,7 @@ const errorMessage = ref("");
 async function login() {
   try {
     await userSession.login(username.value, password.value, true);
-    router.push("/mockATM");
+    router.push("/Overview");
   } catch (error) {
     errorMessage.value = "Invalid login credentials. Please try again.";
     console.error("ATM login failed:", error);
