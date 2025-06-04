@@ -59,19 +59,6 @@
             </div>
           </div>
 
-          <!-- Description Input -->
-          <div class="mb-3">
-            <label for="description" class="form-label">Description</label>
-            <input
-              type="text"
-              id="description"
-              v-model="description"
-              class="form-control"
-              placeholder="Enter transfer description"
-              required
-            />
-          </div>
-
           <!-- Error Messages -->
           <div v-if="error" class="alert alert-danger" role="alert">
             {{ error }}
@@ -108,7 +95,6 @@ export default {
       fromAccount: "",
       toAccount: "",
       amount: null,
-      description: "",
       userAccounts: [],
       loading: false,
       error: null,
@@ -121,11 +107,25 @@ export default {
   methods: {
     async fetchUserAccounts() {
       try {
-        const response = await axios.get("/api/accounts");
-        this.userAccounts = response.data;
+        const response = await axios.get("/accounts");
+        this.userAccounts = response.data.map(account => ({
+          iban: account.iban,
+          balance: parseFloat(account.balance),
+          accountType: this.formatAccountType(account.bankAccountType),
+        }));
       } catch (error) {
         console.error("Error fetching accounts:", error);
         this.error = "Failed to load your accounts";
+      }
+    },
+    formatAccountType(type) {
+      switch(type) {
+        case 'CHECKING_ACCOUNT':
+          return 'Checking Account';
+        case 'SAVING_ACCOUNT':
+          return 'Savings Account';
+        default:
+          return type;
       }
     },
     async handleTransfer() {
@@ -138,11 +138,10 @@ export default {
           fromIban: this.fromAccount,
           toIban: this.toAccount,
           amount: parseFloat(this.amount),
-          description: this.description,
         };
 
         const response = await axios.post(
-          "/api/transactions/transfer",
+          "/transactions",
           request
         );
         this.success = response.data;
@@ -151,7 +150,6 @@ export default {
         this.fromAccount = "";
         this.toAccount = "";
         this.amount = null;
-        this.description = "";
 
         // Refresh account balances
         await this.fetchUserAccounts();

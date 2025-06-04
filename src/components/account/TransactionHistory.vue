@@ -105,10 +105,19 @@
 
         <!-- Loading and Empty States -->
         <div v-if="loading" class="text-center mt-4">
-          <p>Loading transactions...</p>
+          <div class="spinner-border" role="status">
+            <span class="sr-only">Loading...</span>
+          </div>
+          <p class="mt-2">Loading transactions...</p>
+        </div>
+        <div v-else-if="error" class="alert alert-danger mt-4">
+          {{ error }}
+          <button @click="fetchTransactions" class="btn btn-sm btn-outline-danger ml-2">
+            Retry
+          </button>
         </div>
         <div v-else-if="transactions.length === 0" class="text-center mt-4">
-          <p>No transactions found</p>
+          <p class="text-muted">No transactions found</p>
         </div>
       </div>
     </div>
@@ -137,6 +146,7 @@ export default {
       endDate: "",
       sortKey: "date",
       sortOrder: "desc",
+      error: null,
     };
   },
   computed: {
@@ -165,32 +175,124 @@ export default {
   methods: {
     async fetchAccounts() {
       try {
-        const response = await axios.get("/api/accounts");
-        this.accounts = response.data;
+        const response = await axios.get("/accounts");
+        this.accounts = response.data.map(account => ({
+          iban: account.iban,
+          balance: parseFloat(account.balance),
+          accountType: this.formatAccountType(account.bankAccountType),
+        }));
       } catch (error) {
         console.error("Error fetching accounts:", error);
-        alert("Failed to load accounts");
+        this.error = "Failed to load accounts";
       }
     },
     async fetchTransactions() {
       this.loading = true;
+      this.error = null;
       try {
-        const params = new URLSearchParams();
-        if (this.selectedAccount)
-          params.append("account", this.selectedAccount);
-        if (this.selectedType) params.append("type", this.selectedType);
-        if (this.startDate) params.append("startDate", this.startDate);
-        if (this.endDate) params.append("endDate", this.endDate);
-
-        const response = await axios.get(
-          `/api/transactions?${params.toString()}`
-        );
-        this.transactions = response.data;
+        if (this.selectedAccount) {
+          // Fetch transactions for specific account
+          const response = await axios.get(`/customer-accounts/${this.selectedAccount}/transactions`);
+          let transactions = response.data.map(tx => ({
+            id: tx.transactionId || Math.random(),
+            date: tx.occuredAt,
+            type: this.determineTransactionType(tx),
+            fromAccount: tx.accountFrom || 'N/A',
+            toAccount: tx.accountTo || 'N/A',
+            amount: parseFloat(tx.amount),
+            description: this.generateDescription(tx)
+          }));
+          
+          // Apply client-side filtering
+          this.transactions = this.applyClientSideFilters(transactions);
+        } else {
+          // Fetch all transactions for customer
+          const customerResponse = await axios.get("/customer-accounts/get-customer");
+          const customerData = customerResponse.data;
+          
+          // Get transactions for all customer accounts
+          let allTransactions = [];
+          for (const account of customerData.accounts) {
+            try {
+              const response = await axios.get(`/customer-accounts/${account.iban}/transactions`);
+              allTransactions = [...allTransactions, ...response.data];
+            } catch (error) {
+              console.error(`Error fetching transactions for ${account.iban}:`, error);
+            }
+          }
+          
+          let transactions = allTransactions.map(tx => ({
+            id: tx.transactionId || Math.random(),
+            date: tx.occuredAt,
+            type: this.determineTransactionType(tx),
+            fromAccount: tx.accountFrom || 'N/A',
+            toAccount: tx.accountTo || 'N/A',
+            amount: parseFloat(tx.amount),
+            description: this.generateDescription(tx)
+          }));
+          
+          // Apply client-side filtering
+          this.transactions = this.applyClientSideFilters(transactions);
+        }
       } catch (error) {
         console.error("Error fetching transactions:", error);
-        alert("Failed to load transactions");
+        this.error = "Failed to load transactions";
       } finally {
         this.loading = false;
+      }
+    },
+    applyClientSideFilters(transactions) {
+      let filtered = [...transactions];
+      
+      // Filter by transaction type
+      if (this.selectedType) {
+        filtered = filtered.filter(tx => tx.type === this.selectedType);
+      }
+      
+      // Filter by date range
+      if (this.startDate) {
+        const startDate = new Date(this.startDate);
+        filtered = filtered.filter(tx => new Date(tx.date) >= startDate);
+      }
+      
+      if (this.endDate) {
+        const endDate = new Date(this.endDate);
+        endDate.setHours(23, 59, 59, 999); // End of day
+        filtered = filtered.filter(tx => new Date(tx.date) <= endDate);
+      }
+      
+      return filtered;
+    },
+    determineTransactionType(transaction) {
+      if (!transaction.accountFrom && transaction.accountTo) {
+        return 'DEPOSIT';
+      } else if (transaction.accountFrom && !transaction.accountTo) {
+        return 'WITHDRAWAL';
+      } else {
+        return 'TRANSFER';
+      }
+    },
+    generateDescription(transaction) {
+      const type = this.determineTransactionType(transaction);
+      switch(type) {
+        case 'DEPOSIT':
+          return `Deposit to ${transaction.accountTo}`;
+        case 'WITHDRAWAL':
+          return `Withdrawal from ${transaction.accountFrom}`;
+        case 'TRANSFER':
+          return `Transfer from ${transaction.accountFrom} to ${transaction.accountTo}`;
+        default:
+          return 'Transaction';
+      }
+    },
+    formatAccountType(type) {
+      switch(type) {
+        case 'CHECKING_ACCOUNT':
+          return 'Checking Account';
+        case 'SAVING_ACCOUNT':
+          return 'Savings Account';
+        default:
+          return type;
       }
     },
     sortBy(key) {
@@ -262,4 +364,3 @@ export default {
   }
 }
 </style>
-../../store/userSessionStore
