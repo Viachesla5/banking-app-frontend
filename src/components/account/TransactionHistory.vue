@@ -165,7 +165,7 @@
               :class="{ active: sortKey === 'date' }"
             >
               <i class="fas fa-calendar"></i>
-              Date
+                  Date
               <i v-if="sortKey === 'date'" :class="sortOrder === 'asc' ? 'fas fa-sort-up' : 'fas fa-sort-down'"></i>
             </button>
             <button 
@@ -211,7 +211,7 @@
               <div class="transaction-meta">
                 <span class="transaction-type" :class="getTransactionTypeClass(transaction.type)">
                   {{ transaction.type }}
-                </span>
+                  </span>
               </div>
             </div>
             <div class="transaction-amount">
@@ -220,9 +220,9 @@
                 :class="getAmountClass(transaction.amount)"
               >
                 {{ transaction.amount >= 0 ? '+' : '-' }}€{{ Math.abs(transaction.amount).toFixed(2) }}
-              </span>
-            </div>
-          </div>
+                  </span>
+        </div>
+        </div>
         </div>
       </div>
     </div>

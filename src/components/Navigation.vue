@@ -8,17 +8,9 @@
         <router-link to="/" class="navbar-brand">
           <h5><i class="fas fa-university me-2"></i>InhollandBank</h5>
         </router-link>
-        <li v-if="isLoggedIn" class="nav-item">
-          <button
-            type="button"
-            class="btn btn-danger"
-            @click="logout"
-            style="margin: 2px 30px"
-          >
-            Log out - ATM
-          </button>
-        </li>
-        <li v-else class="nav-item">
+        
+        <!-- ATM Login button for non-logged in users -->
+        <li v-if="!isLoggedIn" class="nav-item">
           <button
             type="button"
             class="btn btn-success"
@@ -28,6 +20,7 @@
             Login ATM
           </button>
         </li>
+        
         <ul class="navbar-nav ms-auto">
           <!-- Regular Login Navigation -->
           <template v-if="isLoggedIn && !isATM">
@@ -62,20 +55,20 @@
             </li>
           </template>
           
-          <!-- Logout button for logged in users -->
-          <li v-if="isLoggedIn && !isATM" class="nav-item">
+          <!-- Single Logout button for all logged in users (both ATM and regular) -->
+          <li v-if="isLoggedIn" class="nav-item">
             <button
               type="button"
               class="btn btn-danger"
               @click="logout"
               style="margin: 2px 30px"
             >
-              Log out
+              {{ isATM ? 'Log out - ATM' : 'Log out' }}
             </button>
           </li>
           
           <!-- Login/Register buttons for non-logged in users -->
-          <li v-if="!isLoggedIn && !isATM" class="nav-item d-flex gap-2 align-items-center">
+          <li v-if="!isLoggedIn" class="nav-item d-flex gap-2 align-items-center">
             <button
               type="button"
               class="btn btn-outline-light btn-sm"
