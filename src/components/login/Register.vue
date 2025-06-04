@@ -78,7 +78,7 @@
         </div>
 
         <button type="button" @click="nextStep" class="btn btn-primary btn-lg w-100">
-          Continue to Security <i class="fas fa-arrow-right ms-2"></i>
+          Continue<i class="fas fa-arrow-right ms-2"></i>
         </button>
       </div>
 

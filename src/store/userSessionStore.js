@@ -61,8 +61,12 @@ export const useUserSessionStore = defineStore("userSessionStore", {
       this.username = "";
       this.token = "";
       this.role = "";
+      this.userId = "";
+      this.isATM = false; // Reset ATM state
       localStorage.removeItem("token");
       localStorage.removeItem("role");
+      localStorage.removeItem("userId");
+      localStorage.removeItem("isATM");
       Axios.defaults.headers.common["Authorization"] = "";
       localStorage.clear();
     },

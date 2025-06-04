@@ -8,7 +8,7 @@
         <router-link to="/" class="navbar-brand">
           <h5><i class="fas fa-university me-2"></i>InhollandBank</h5>
         </router-link>
-        <li v-if="store.isLoggedIn" class="nav-item">
+        <li v-if="isLoggedIn" class="nav-item">
           <button
             type="button"
             class="btn btn-danger"
@@ -29,8 +29,8 @@
           </button>
         </li>
         <ul class="navbar-nav ms-auto">
-          <!-- ATM Login Navigation -->
-          <template v-if="store.isLoggedIn && store.isATM">
+          <!-- Regular Login Navigation -->
+          <template v-if="isLoggedIn && !isATM">
             <li class="nav-item">
               <router-link to="/Overview" class="nav-link">
                 Overview
@@ -47,23 +47,23 @@
               </router-link>
             </li>
             <li class="nav-item">
-              <router-link to="/atm-operations" class="nav-link">
-                ATM Operations
-              </router-link>
-            </li>
-          </template>
-          
-          <!-- Regular Login Navigation -->
-          <template v-else-if="store.isLoggedIn && !store.isATM">
-            <li class="nav-item">
               <router-link to="/account-details" class="nav-link">
                 Account Details
               </router-link>
             </li>
           </template>
           
+          <!-- ATM Login Navigation -->
+          <template v-else-if="isLoggedIn && isATM">
+            <li class="nav-item">
+              <router-link to="/atm-operations" class="nav-link">
+                ATM Operations
+              </router-link>
+            </li>
+          </template>
+          
           <!-- Logout button for logged in users -->
-          <li v-if="store.isLoggedIn && !store.isATM" class="nav-item">
+          <li v-if="isLoggedIn && !isATM" class="nav-item">
             <button
               type="button"
               class="btn btn-danger"
@@ -75,7 +75,7 @@
           </li>
           
           <!-- Login/Register buttons for non-logged in users -->
-          <li v-if="!store.isLoggedIn && !store.isATM" class="nav-item d-flex gap-2 align-items-center">
+          <li v-if="!isLoggedIn && !isATM" class="nav-item d-flex gap-2 align-items-center">
             <button
               type="button"
               class="btn btn-outline-light btn-sm"
@@ -101,24 +101,35 @@
 
 <script>
 import { useUserSessionStore } from "/src/store/userSessionStore";
+import { storeToRefs } from 'pinia';
 
 export default {
   name: "Navbar",
   setup() {
     const store = useUserSessionStore();
-    return { store };
-  },
-  data() {
-    return {
-      isLoggedIn: this.store.isLoggedIn,
+    
+    // Use storeToRefs to make store state reactive
+    const { isLoggedIn, isATM, userId, role } = storeToRefs(store);
+    
+    return { 
+      store,
+      isLoggedIn,
+      isATM,
+      userId,
+      role
     };
   },
   methods: {
     logout() {
+      // Clear the store and redirect
       this.store.logout();
-      this.$router.push('/login');
+      
+      // Use nextTick to ensure the state is fully cleared before navigation
+      this.$nextTick(() => {
+        this.$router.push('/login');
+      });
     },
-  },
+  }
 };
 </script>
 
