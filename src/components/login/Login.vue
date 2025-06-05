@@ -61,7 +61,7 @@ export default {
       this.store
         .login(this.username, this.password)
         .then(() => {
-          this.$router.push("/account-details");
+          this.$router.push("/overview");
         })
         .catch((error) => {
           console.log(error);
