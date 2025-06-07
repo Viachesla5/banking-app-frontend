@@ -230,6 +230,29 @@ export default {
 
       this.transferLoading = true;
 
+      const fromAccount = this.accounts.find(
+        (acc) => acc.iban === this.transfer.fromIban
+      );
+
+      if (!fromAccount) {
+        this.transferError = "Selected source account not found.";
+        this.transferLoading = false;
+        return;
+      }
+
+      const remainingBalance = fromAccount.balance - this.transfer.amount;
+
+      if (remainingBalance < fromAccount.absolutelyLimit) {
+        const confirmProceed = window.confirm(
+          `⚠️ Warning: This transaction will result in a negative balance as you will use your absolute limit (€${fromAccount.absolutelyLimit}). Do you want to proceed?`
+        );
+
+        if (!confirmProceed) {
+          this.transferLoading = false;
+          return;
+        }
+      }
+
       try {
         const store = useUserSessionStore();
         await axios.post(
@@ -252,7 +275,6 @@ export default {
         this.transfer.amount = null;
         this.transfer.description = "";
 
-        // Refresh accounts balances after successful transfer
         this.fetchAccounts();
       } catch (error) {
         this.transferError =
@@ -261,7 +283,6 @@ export default {
         this.transferLoading = false;
       }
     },
-
     async searchByName() {
       this.searchLoading = true;
       this.searchError = "";
