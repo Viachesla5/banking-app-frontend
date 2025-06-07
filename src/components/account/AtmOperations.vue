@@ -7,7 +7,9 @@
           <i class="fas fa-university me-3"></i>
           ATM Operations
         </h1>
-        <p class="page-subtitle">Deposit or withdraw funds from your accounts</p>
+        <p class="page-subtitle">
+          Deposit or withdraw funds from your accounts
+        </p>
       </div>
     </div>
 
@@ -53,27 +55,26 @@
 
           <!-- Transaction Form -->
           <form @submit.prevent="handleAtmOperation" class="atm-form">
-          <!-- Account Selection -->
+            <!-- Account Selection -->
             <div class="form-section">
               <label class="section-label">
                 <i class="fas fa-credit-card me-2"></i>
                 Select Account
               </label>
               <div class="select-wrapper">
-            <select
-              v-model="selectedAccount"
-                  class="atm-select"
-              required
-            >
+                <select v-model="selectedAccount" class="atm-select" required>
                   <option value="">Choose your account</option>
-              <option
-                v-for="account in userAccounts"
-                :key="account.iban"
-                :value="account.iban"
-              >
-                    {{ account.accountType }} - {{ formatIban(account.iban) }} (€{{ account.balance.toFixed(2) }})
-              </option>
-            </select>
+                  <option
+                    v-for="account in userAccounts"
+                    :key="account.iban"
+                    :value="account.iban"
+                  >
+                    {{ account.accountType }} -
+                    {{ formatIban(account.iban) }} (€{{
+                      account.balance.toFixed(2)
+                    }})
+                  </option>
+                </select>
                 <i class="fas fa-chevron-down select-arrow"></i>
               </div>
 
@@ -81,25 +82,35 @@
               <div v-if="selectedAccountDetails" class="account-display">
                 <div class="account-card">
                   <div class="account-icon">
-                    <i :class="getAccountIcon(selectedAccountDetails.accountType)"></i>
+                    <i
+                      :class="
+                        getAccountIcon(selectedAccountDetails.accountType)
+                      "
+                    ></i>
                   </div>
                   <div class="account-info">
                     <h4>{{ selectedAccountDetails.accountType }}</h4>
-                    <p class="account-number">{{ formatIban(selectedAccountDetails.iban) }}</p>
+                    <p class="account-number">
+                      {{ formatIban(selectedAccountDetails.iban) }}
+                    </p>
                     <div class="account-balance">
                       <span class="balance-label">Available Balance:</span>
-                      <span class="balance-amount">€{{ selectedAccountDetails.balance.toFixed(2) }}</span>
+                      <span class="balance-amount"
+                        >€{{ selectedAccountDetails.balance.toFixed(2) }}</span
+                      >
                     </div>
                     <div class="daily-limit">
                       <span class="limit-label">Daily Limit:</span>
-                      <span class="limit-amount">€{{ selectedAccountDetails.dailyLimit }}</span>
+                      <span class="limit-amount"
+                        >€{{ selectedAccountDetails.dailyLimit }}</span
+                      >
                     </div>
                   </div>
                 </div>
               </div>
-          </div>
+            </div>
 
-          <!-- Amount Input -->
+            <!-- Amount Input -->
             <div class="form-section">
               <label class="section-label">
                 <i class="fas fa-euro-sign me-2"></i>
@@ -107,86 +118,113 @@
               </label>
               <div class="amount-input-wrapper">
                 <div class="currency-symbol">€</div>
-              <input
-                type="number"
-                v-model="amount"
+                <input
+                  type="number"
+                  v-model="amount"
                   class="amount-input"
                   placeholder="0.00"
-                step="0.01"
-                min="0.01"
-                required
-              />
+                  step="0.01"
+                  min="0.01"
+                  required
+                />
+              </div>
             </div>
-          </div>
 
-          <!-- Quick Amount Buttons -->
+            <!-- Quick Amount Buttons -->
             <div class="form-section">
               <label class="section-label">Quick Select</label>
               <div class="quick-amounts">
-              <button
-                type="button"
-                v-for="quickAmount in quickAmounts"
-                :key="quickAmount"
-                @click="amount = quickAmount"
+                <button
+                  type="button"
+                  v-for="quickAmount in quickAmounts"
+                  :key="quickAmount"
+                  @click="amount = quickAmount"
                   class="quick-amount-btn"
                   :class="{ selected: amount == quickAmount }"
-              >
-                €{{ quickAmount }}
-              </button>
+                >
+                  €{{ quickAmount }}
+                </button>
+              </div>
             </div>
-          </div>
 
             <!-- Transaction Summary -->
-            <div v-if="operationType && selectedAccount && amount" class="transaction-summary">
+            <div
+              v-if="operationType && selectedAccount && amount"
+              class="transaction-summary"
+            >
               <h4>Transaction Summary</h4>
               <div class="summary-grid">
                 <div class="summary-item">
                   <span class="summary-label">Operation:</span>
-                  <span class="summary-value operation-type" :class="operationType">
-                    <i :class="operationType === 'deposit' ? 'fas fa-arrow-down' : 'fas fa-arrow-up'"></i>
-                    {{ operationType === 'deposit' ? 'Cash Deposit' : 'Cash Withdrawal' }}
+                  <span
+                    class="summary-value operation-type"
+                    :class="operationType"
+                  >
+                    <i
+                      :class="
+                        operationType === 'deposit'
+                          ? 'fas fa-arrow-down'
+                          : 'fas fa-arrow-up'
+                      "
+                    ></i>
+                    {{
+                      operationType === "deposit"
+                        ? "Cash Deposit"
+                        : "Cash Withdrawal"
+                    }}
                   </span>
                 </div>
                 <div class="summary-item">
                   <span class="summary-label">Account:</span>
-                  <span class="summary-value">{{ formatIban(selectedAccount) }}</span>
+                  <span class="summary-value">{{
+                    formatIban(selectedAccount)
+                  }}</span>
                 </div>
                 <div class="summary-item">
                   <span class="summary-label">Amount:</span>
-                  <span class="summary-value amount">€{{ parseFloat(amount || 0).toFixed(2) }}</span>
+                  <span class="summary-value amount"
+                    >€{{ parseFloat(amount || 0).toFixed(2) }}</span
+                  >
                 </div>
               </div>
             </div>
 
-          <!-- Error Messages -->
+            <!-- Error Messages -->
             <div v-if="error" class="alert alert-error">
               <i class="fas fa-exclamation-triangle me-2"></i>
-            {{ error }}
-          </div>
+              {{ error }}
+            </div>
 
-          <!-- Success Message -->
+            <!-- Success Message -->
             <div v-if="success" class="alert alert-success">
               <i class="fas fa-check-circle me-2"></i>
-            {{ success }}
-          </div>
+              {{ success }}
+            </div>
 
-          <!-- Submit Button -->
-          <button
-            type="submit"
+            <!-- Submit Button -->
+            <button
+              type="submit"
               class="atm-submit-btn"
               :class="[operationType, { loading: loading }]"
               :disabled="loading || !isFormValid"
-          >
+            >
               <span v-if="loading" class="loading-content">
                 <i class="fas fa-spinner fa-spin me-2"></i>
                 Processing...
               </span>
               <span v-else class="submit-content">
-                <i :class="operationType === 'deposit' ? 'fas fa-plus' : 'fas fa-minus'" class="me-2"></i>
-                {{ operationType === 'deposit' ? 'Deposit Cash' : 'Withdraw Cash' }}
+                <i
+                  :class="
+                    operationType === 'deposit' ? 'fas fa-plus' : 'fas fa-minus'
+                  "
+                  class="me-2"
+                ></i>
+                {{
+                  operationType === "deposit" ? "Deposit Cash" : "Withdraw Cash"
+                }}
               </span>
-          </button>
-        </form>
+            </button>
+          </form>
         </div>
       </div>
 
@@ -197,7 +235,11 @@
             <h4>Instructions</h4>
             <div class="instruction-item">
               <i class="fas fa-1"></i>
-              <span>Select {{ operationType === 'deposit' ? 'deposit' : 'withdrawal' }} operation</span>
+              <span
+                >Select
+                {{ operationType === "deposit" ? "deposit" : "withdrawal" }}
+                operation</span
+              >
             </div>
             <div class="instruction-item">
               <i class="fas fa-2"></i>
@@ -217,7 +259,10 @@
             <i class="fas fa-shield-alt safety-icon"></i>
             <div class="safety-text">
               <h5>Safety Notice</h5>
-              <p>Always ensure you're alone when using the ATM and cover your PIN entry.</p>
+              <p>
+                Always ensure you're alone when using the ATM and cover your PIN
+                entry.
+              </p>
             </div>
           </div>
         </div>
@@ -251,10 +296,17 @@ export default {
   },
   computed: {
     selectedAccountDetails() {
-      return this.userAccounts.find(account => account.iban === this.selectedAccount);
+      return this.userAccounts.find(
+        (account) => account.iban === this.selectedAccount
+      );
     },
     isFormValid() {
-      return this.operationType && this.selectedAccount && this.amount && this.amount > 0;
+      return (
+        this.operationType &&
+        this.selectedAccount &&
+        this.amount &&
+        this.amount > 0
+      );
     },
   },
   async created() {
@@ -264,7 +316,7 @@ export default {
     async fetchUserAccounts() {
       try {
         const response = await axios.get("/accounts");
-        this.userAccounts = response.data.map(account => ({
+        this.userAccounts = response.data.map((account) => ({
           iban: account.iban,
           balance: parseFloat(account.balance),
           accountType: this.formatAccountType(account.bankAccountType),
@@ -276,21 +328,23 @@ export default {
       }
     },
     formatAccountType(type) {
-      switch(type) {
-        case 'CHECKING_ACCOUNT':
-          return 'Checking Account';
-        case 'SAVING_ACCOUNT':
-          return 'Savings Account';
+      switch (type) {
+        case "CHECKING_ACCOUNT":
+          return "Checking Account";
+        case "SAVING_ACCOUNT":
+          return "Savings Account";
         default:
           return type;
       }
     },
     formatIban(iban) {
-      if (!iban) return '';
-      return iban.replace(/(.{4})/g, '$1 ').trim();
+      if (!iban) return "";
+      return iban.replace(/(.{4})/g, "$1 ").trim();
     },
     getAccountIcon(accountType) {
-      return accountType.includes('Checking') ? 'fas fa-credit-card' : 'fas fa-piggy-bank';
+      return accountType.includes("Checking")
+        ? "fas fa-credit-card"
+        : "fas fa-piggy-bank";
     },
     async handleAtmOperation() {
       this.loading = true;
@@ -300,19 +354,24 @@ export default {
       try {
         const request = {
           amount: parseFloat(this.amount),
+          iban: this.selectedAccount,
         };
 
-        if (this.operationType === "deposit") {
-          request.toIban = this.selectedAccount;
+        let endpoint = "";
+
+        if (this.operationType === "withdraw") {
+          endpoint = "/transactions/withdraw";
         } else {
-          request.fromIban = this.selectedAccount;
+          // Assuming you still use this for deposits (update if needed)
+          endpoint = "/transactions/atm/transaction";
+          // If deposit uses 'toIban' instead of 'iban', keep this:
+          request.toIban = this.selectedAccount;
+          delete request.iban;
         }
 
-        const response = await axios.post(
-          "/transactions/atm/transaction",
-          request
-        );
-        this.success = response.data;
+        const response = await axios.post(endpoint, request);
+        //this.success = response.data;
+        this.success = "Transaction successful.";
 
         // Reset form
         this.amount = null;
@@ -324,24 +383,29 @@ export default {
         setTimeout(() => {
           this.success = null;
         }, 5000);
-
       } catch (error) {
         if (error.response) {
+          const errorMessage =
+            error.response.data?.message ||
+            error.response.data ||
+            "An error occurred.";
+
           switch (error.response.status) {
             case 404:
               this.error = "Account not found. Please select a valid account.";
               break;
             case 400:
-              this.error = error.response.data || "Invalid transaction. Please check your details.";
+              this.error = errorMessage;
               break;
             case 403:
-              this.error = "Daily limit exceeded or insufficient funds.";
+              this.error = errorMessage;
               break;
             default:
-              this.error = "An error occurred while processing your transaction.";
+              this.error = errorMessage;
           }
         } else {
-          this.error = "Network error. Please check your connection and try again.";
+          this.error =
+            "Network error. Please check your connection and try again.";
         }
         console.error("ATM operation error:", error);
       } finally {
@@ -358,23 +422,22 @@ export default {
   background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
   padding: 2rem 0;
   position: relative;
-  
+
   // ATM-style background pattern
   &::before {
-    content: '';
+    content: "";
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    background: 
-      repeating-linear-gradient(
-        45deg,
-        transparent,
-        transparent 2px,
-        rgba(255, 255, 255, 0.03) 2px,
-        rgba(255, 255, 255, 0.03) 4px
-      );
+    background: repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 2px,
+      rgba(255, 255, 255, 0.03) 2px,
+      rgba(255, 255, 255, 0.03) 4px
+    );
     pointer-events: none;
   }
 }
@@ -402,7 +465,7 @@ export default {
   align-items: center;
   justify-content: center;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-  
+
   i {
     color: #00ff88;
   }
@@ -432,13 +495,11 @@ export default {
   border: 3px solid #00ff88;
   border-radius: 20px;
   padding: 2rem;
-  box-shadow: 
-    0 0 30px rgba(0, 255, 136, 0.3),
-    inset 0 0 20px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 0 30px rgba(0, 255, 136, 0.3), inset 0 0 20px rgba(0, 0, 0, 0.5);
   position: relative;
-  
+
   &::before {
-    content: '';
+    content: "";
     position: absolute;
     top: 10px;
     left: 10px;
@@ -451,8 +512,13 @@ export default {
 }
 
 @keyframes atmPulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.6; }
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.6;
+  }
 }
 
 .screen-header {
@@ -490,8 +556,13 @@ export default {
 }
 
 @keyframes blink {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.3; }
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.3;
+  }
 }
 
 .screen-content {
@@ -501,7 +572,7 @@ export default {
 // Operation Selector
 .operation-selector {
   margin-bottom: 2rem;
-  
+
   h3 {
     color: #00ff88;
     margin-bottom: 1rem;
@@ -529,19 +600,19 @@ export default {
   font-weight: 600;
   transition: all 0.3s ease;
   cursor: pointer;
-  
+
   &:hover {
     background: rgba(0, 255, 136, 0.1);
     border-color: rgba(0, 255, 136, 0.6);
     transform: translateY(-2px);
   }
-  
+
   &.active {
     background: rgba(0, 255, 136, 0.2);
     border-color: #00ff88;
     box-shadow: 0 0 20px rgba(0, 255, 136, 0.3);
   }
-  
+
   i {
     font-size: 1.5rem;
   }
@@ -583,12 +654,12 @@ export default {
   font-size: 1rem;
   appearance: none;
   transition: all 0.3s ease;
-  
+
   &:focus {
     outline: none;
     border-color: #00ff88;
     box-shadow: 0 0 15px rgba(0, 255, 136, 0.3);
-}
+  }
 
   option {
     background: #2c3e50;
@@ -634,29 +705,31 @@ export default {
 
 .account-info {
   flex: 1;
-  
+
   h4 {
     margin: 0 0 0.5rem 0;
     color: white;
     font-size: 1.1rem;
   }
-  
+
   .account-number {
     margin: 0 0 0.5rem 0;
-    font-family: 'Courier New', monospace;
+    font-family: "Courier New", monospace;
     color: #00ff88;
     font-size: 0.9rem;
   }
 }
 
-.account-balance, .daily-limit {
+.account-balance,
+.daily-limit {
   display: flex;
   justify-content: space-between;
   margin-bottom: 0.25rem;
   font-size: 0.9rem;
 }
 
-.balance-label, .limit-label {
+.balance-label,
+.limit-label {
   color: #bdc3c7;
 }
 
@@ -696,13 +769,13 @@ export default {
   font-size: 1.2rem;
   font-weight: 600;
   transition: all 0.3s ease;
-  
+
   &:focus {
     outline: none;
     border-color: #00ff88;
     box-shadow: 0 0 15px rgba(0, 255, 136, 0.3);
   }
-  
+
   &::placeholder {
     color: rgba(255, 255, 255, 0.5);
   }
@@ -724,13 +797,13 @@ export default {
   font-weight: 600;
   transition: all 0.3s ease;
   cursor: pointer;
-  
+
   &:hover {
     background: rgba(0, 255, 136, 0.1);
     border-color: rgba(0, 255, 136, 0.6);
     transform: scale(1.05);
   }
-  
+
   &.selected {
     background: rgba(0, 255, 136, 0.2);
     border-color: #00ff88;
@@ -744,7 +817,7 @@ export default {
   border: 1px solid rgba(0, 255, 136, 0.3);
   border-radius: 12px;
   padding: 1.5rem;
-  
+
   h4 {
     margin: 0 0 1rem 0;
     color: #00ff88;
@@ -764,7 +837,7 @@ export default {
   align-items: center;
   padding: 0.5rem 0;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  
+
   &:last-child {
     border-bottom: none;
   }
@@ -778,22 +851,22 @@ export default {
 .summary-value {
   color: white;
   font-weight: 600;
-  font-family: 'Courier New', monospace;
-  
+  font-family: "Courier New", monospace;
+
   &.operation-type {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    
+
     &.deposit {
       color: #00ff88;
     }
-    
+
     &.withdraw {
       color: #ff6b6b;
     }
   }
-  
+
   &.amount {
     color: #00ff88;
     font-size: 1.1rem;
@@ -807,13 +880,13 @@ export default {
   display: flex;
   align-items: center;
   margin: 1rem 0;
-  
+
   &.alert-error {
     background: rgba(255, 107, 107, 0.2);
     color: #ff6b6b;
     border: 1px solid rgba(255, 107, 107, 0.3);
   }
-  
+
   &.alert-success {
     background: rgba(0, 255, 136, 0.2);
     color: #00ff88;
@@ -832,35 +905,36 @@ export default {
   transition: all 0.3s ease;
   margin-top: 1rem;
   cursor: pointer;
-  
+
   &.deposit {
     background: linear-gradient(45deg, #00ff88, #00cc6a);
     color: #1a1a1a;
   }
-  
+
   &.withdraw {
     background: linear-gradient(45deg, #ff6b6b, #ff5252);
     color: white;
   }
-  
+
   &:hover:not(:disabled) {
     transform: translateY(-2px);
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
-}
+  }
 
   &:disabled {
     background: #7f8c8d;
     cursor: not-allowed;
     color: #bdc3c7;
   }
-  
+
   &.loading {
     background: #3498db;
     color: white;
   }
 }
 
-.loading-content, .submit-content {
+.loading-content,
+.submit-content {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -882,7 +956,7 @@ export default {
 
 .instructions {
   margin-bottom: 2rem;
-  
+
   h4 {
     color: #00ff88;
     margin-bottom: 1rem;
@@ -898,7 +972,7 @@ export default {
   padding: 0.75rem;
   background: rgba(0, 255, 136, 0.1);
   border-radius: 8px;
-  
+
   i {
     width: 30px;
     height: 30px;
@@ -911,7 +985,7 @@ export default {
     font-weight: 600;
     font-size: 0.9rem;
   }
-  
+
   span {
     font-size: 0.9rem;
   }
@@ -939,7 +1013,7 @@ export default {
     color: #f39c12;
     font-size: 1rem;
   }
-  
+
   p {
     margin: 0;
     font-size: 0.85rem;
@@ -954,11 +1028,11 @@ export default {
     grid-template-columns: 1fr;
     gap: 1.5rem;
   }
-  
+
   .operation-buttons {
     grid-template-columns: 1fr;
   }
-  
+
   .quick-amounts {
     grid-template-columns: repeat(3, 1fr);
   }
@@ -968,15 +1042,16 @@ export default {
   .atm-operations-container {
     padding: 1rem 0;
   }
-  
-  .header-section, .atm-interface {
+
+  .header-section,
+  .atm-interface {
     padding: 0 1rem;
   }
-  
+
   .page-title {
     font-size: 2rem;
   }
-  
+
   .atm-screen {
     padding: 1.5rem;
   }
@@ -984,7 +1059,7 @@ export default {
   .quick-amounts {
     grid-template-columns: repeat(2, 1fr);
   }
-  
+
   .account-card {
     flex-direction: column;
     text-align: center;
