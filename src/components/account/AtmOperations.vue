@@ -53,27 +53,27 @@
 
           <!-- Transaction Form -->
           <form @submit.prevent="handleAtmOperation" class="atm-form">
-            <!-- Account Selection -->
+          <!-- Account Selection -->
             <div class="form-section">
               <label class="section-label">
                 <i class="fas fa-credit-card me-2"></i>
                 Select Account
               </label>
               <div class="select-wrapper">
-                <select
-                  v-model="selectedAccount"
+            <select
+              v-model="selectedAccount"
                   class="atm-select"
-                  required
-                >
+              required
+            >
                   <option value="">Choose your account</option>
-                  <option
-                    v-for="account in userAccounts"
-                    :key="account.iban"
-                    :value="account.iban"
-                  >
+              <option
+                v-for="account in userAccounts"
+                :key="account.iban"
+                :value="account.iban"
+              >
                     {{ account.accountType }} - {{ formatIban(account.iban) }} (€{{ account.balance.toFixed(2) }})
-                  </option>
-                </select>
+              </option>
+            </select>
                 <i class="fas fa-chevron-down select-arrow"></i>
               </div>
 
@@ -97,9 +97,9 @@
                   </div>
                 </div>
               </div>
-            </div>
+          </div>
 
-            <!-- Amount Input -->
+          <!-- Amount Input -->
             <div class="form-section">
               <label class="section-label">
                 <i class="fas fa-euro-sign me-2"></i>
@@ -107,34 +107,34 @@
               </label>
               <div class="amount-input-wrapper">
                 <div class="currency-symbol">€</div>
-                <input
-                  type="number"
-                  v-model="amount"
+              <input
+                type="number"
+                v-model="amount"
                   class="amount-input"
                   placeholder="0.00"
-                  step="0.01"
-                  min="0.01"
-                  required
-                />
-              </div>
+                step="0.01"
+                min="0.01"
+                required
+              />
             </div>
+          </div>
 
-            <!-- Quick Amount Buttons -->
+          <!-- Quick Amount Buttons -->
             <div class="form-section">
               <label class="section-label">Quick Select</label>
               <div class="quick-amounts">
-                <button
-                  type="button"
-                  v-for="quickAmount in quickAmounts"
-                  :key="quickAmount"
-                  @click="amount = quickAmount"
+              <button
+                type="button"
+                v-for="quickAmount in quickAmounts"
+                :key="quickAmount"
+                @click="amount = quickAmount"
                   class="quick-amount-btn"
                   :class="{ selected: amount == quickAmount }"
-                >
-                  €{{ quickAmount }}
-                </button>
-              </div>
+              >
+                €{{ quickAmount }}
+              </button>
             </div>
+          </div>
 
             <!-- Transaction Summary -->
             <div v-if="operationType && selectedAccount && amount" class="transaction-summary">
@@ -158,25 +158,25 @@
               </div>
             </div>
 
-            <!-- Error Messages -->
+          <!-- Error Messages -->
             <div v-if="error" class="alert alert-error">
               <i class="fas fa-exclamation-triangle me-2"></i>
-              {{ error }}
-            </div>
+            {{ error }}
+          </div>
 
-            <!-- Success Message -->
+          <!-- Success Message -->
             <div v-if="success" class="alert alert-success">
               <i class="fas fa-check-circle me-2"></i>
-              {{ success }}
-            </div>
+            {{ success }}
+          </div>
 
-            <!-- Submit Button -->
-            <button
-              type="submit"
+          <!-- Submit Button -->
+          <button
+            type="submit"
               class="atm-submit-btn"
               :class="[operationType, { loading: loading }]"
               :disabled="loading || !isFormValid"
-            >
+          >
               <span v-if="loading" class="loading-content">
                 <i class="fas fa-spinner fa-spin me-2"></i>
                 Processing...
@@ -185,8 +185,8 @@
                 <i :class="operationType === 'deposit' ? 'fas fa-plus' : 'fas fa-minus'" class="me-2"></i>
                 {{ operationType === 'deposit' ? 'Deposit Cash' : 'Withdraw Cash' }}
               </span>
-            </button>
-          </form>
+          </button>
+        </form>
         </div>
       </div>
 
@@ -588,8 +588,8 @@ export default {
     outline: none;
     border-color: #00ff88;
     box-shadow: 0 0 15px rgba(0, 255, 136, 0.3);
-  }
-  
+}
+
   option {
     background: #2c3e50;
     color: white;
@@ -846,8 +846,8 @@ export default {
   &:hover:not(:disabled) {
     transform: translateY(-2px);
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
-  }
-  
+}
+
   &:disabled {
     background: #7f8c8d;
     cursor: not-allowed;
@@ -980,7 +980,7 @@ export default {
   .atm-screen {
     padding: 1.5rem;
   }
-  
+
   .quick-amounts {
     grid-template-columns: repeat(2, 1fr);
   }
