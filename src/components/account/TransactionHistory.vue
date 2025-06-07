@@ -273,10 +273,20 @@ export default {
       });
     },
     incomingCount() {
-      return this.transactions.filter(tx => tx.amount > 0).length;
+      return this.transactions.filter(tx => {
+        if (tx.selfTransfer) {
+          return tx.perspective === 'receiver';
+        }
+        return tx.amount > 0;
+      }).length;
     },
     outgoingCount() {
-      return this.transactions.filter(tx => tx.amount < 0).length;
+      return this.transactions.filter(tx => {
+        if (tx.selfTransfer) {
+          return tx.perspective === 'sender';
+        }
+        return tx.amount < 0;
+      }).length;
     },
   },
   async created() {
@@ -304,15 +314,12 @@ export default {
         if (this.selectedAccount) {
           // Fetch transactions for specific account
           const response = await axios.get(`/customer-accounts/${this.selectedAccount}/transactions`);
-          let transactions = response.data.map(tx => ({
-            id: tx.transactionId || Math.random(),
-            date: tx.occuredAt,
-            type: this.determineTransactionType(tx),
-            fromAccount: tx.accountFrom || 'N/A',
-            toAccount: tx.accountTo || 'N/A',
-            amount: parseFloat(tx.amount),
-            description: this.generateDescription(tx)
-          }));
+          
+          // Get customer accounts to check for self-transfers
+          const customerResponse = await axios.get("/customer-accounts/get-customer");
+          const customerData = customerResponse.data;
+          
+          let transactions = this.processSingleAccountTransactions(response.data, this.selectedAccount, customerData.accounts);
           
           // Apply client-side filtering
           this.transactions = this.applyClientSideFilters(transactions);
@@ -332,15 +339,8 @@ export default {
             }
           }
           
-          let transactions = allTransactions.map(tx => ({
-            id: tx.transactionId || Math.random(),
-            date: tx.occuredAt,
-            type: this.determineTransactionType(tx),
-            fromAccount: tx.accountFrom || 'N/A',
-            toAccount: tx.accountTo || 'N/A',
-            amount: parseFloat(tx.amount),
-            description: this.generateDescription(tx)
-          }));
+          // Process transactions and handle self-transfers
+          let transactions = this.processAllAccountTransactions(allTransactions, customerData.accounts);
           
           // Apply client-side filtering
           this.transactions = this.applyClientSideFilters(transactions);
@@ -351,6 +351,114 @@ export default {
       } finally {
         this.loading = false;
       }
+    },
+    processAllAccountTransactions(allTransactions, customerAccounts) {
+      const customerIbans = customerAccounts.map(account => account.iban);
+      let processedTransactions = [];
+      let processedTransactionIds = new Set();
+      
+      for (const tx of allTransactions) {
+        const baseTransaction = {
+          id: tx.transactionId || Math.random(),
+          date: tx.occuredAt,
+          type: this.determineTransactionType(tx),
+          fromAccount: tx.accountFrom || 'N/A',
+          toAccount: tx.accountTo || 'N/A',
+          amount: parseFloat(tx.amount),
+          description: this.generateDescription(tx),
+          originalId: tx.transactionId
+        };
+        
+        // Check if this is a self-transfer (both accounts belong to the customer)
+        const isFromCustomer = customerIbans.includes(tx.accountFrom);
+        const isToCustomer = customerIbans.includes(tx.accountTo);
+        const isSelfTransfer = baseTransaction.type === 'TRANSFER' && isFromCustomer && isToCustomer;
+        
+        if (isSelfTransfer) {
+          // Skip if we already processed this transaction ID to avoid duplicates
+          if (processedTransactionIds.has(tx.transactionId)) {
+            continue;
+          }
+          processedTransactionIds.add(tx.transactionId);
+          
+          // Create sender transaction (debit - negative amount)
+          const senderTransaction = {
+            ...baseTransaction,
+            id: `${baseTransaction.id}_sender`,
+            amount: -Math.abs(baseTransaction.amount),
+            description: `Transfer to ${this.formatIban(tx.accountTo)}`,
+            perspective: 'sender',
+            selfTransfer: true
+          };
+          
+          // Create receiver transaction (credit - positive amount)
+          const receiverTransaction = {
+            ...baseTransaction,
+            id: `${baseTransaction.id}_receiver`,
+            amount: Math.abs(baseTransaction.amount),
+            description: `Transfer from ${this.formatIban(tx.accountFrom)}`,
+            perspective: 'receiver',
+            selfTransfer: true
+          };
+          
+          processedTransactions.push(senderTransaction, receiverTransaction);
+        } else {
+          // Regular transaction - add as is
+          processedTransactions.push(baseTransaction);
+        }
+      }
+      
+      return processedTransactions;
+    },
+    processSingleAccountTransactions(transactions, selectedAccountIban, customerAccounts) {
+      const customerIbans = customerAccounts.map(account => account.iban);
+      
+      return transactions.map(tx => {
+        const baseTransaction = {
+          id: tx.transactionId || Math.random(),
+          date: tx.occuredAt,
+          type: this.determineTransactionType(tx),
+          fromAccount: tx.accountFrom || 'N/A',
+          toAccount: tx.accountTo || 'N/A',
+          amount: parseFloat(tx.amount),
+          description: this.generateDescription(tx),
+          originalId: tx.transactionId
+        };
+        
+        // Check if this is a self-transfer (both accounts belong to the customer)
+        const isFromCustomer = customerIbans.includes(tx.accountFrom);
+        const isToCustomer = customerIbans.includes(tx.accountTo);
+        const isSelfTransfer = baseTransaction.type === 'TRANSFER' && isFromCustomer && isToCustomer;
+        
+        if (isSelfTransfer) {
+          // Determine perspective based on selected account
+          const isSelectedAccountSender = selectedAccountIban === tx.accountFrom;
+          const isSelectedAccountReceiver = selectedAccountIban === tx.accountTo;
+          
+          if (isSelectedAccountSender) {
+            // This account is the sender - show as outgoing (negative)
+            return {
+              ...baseTransaction,
+              amount: -Math.abs(baseTransaction.amount),
+              description: `Transfer to ${this.formatIban(tx.accountTo)}`,
+              perspective: 'sender',
+              selfTransfer: true
+            };
+          } else if (isSelectedAccountReceiver) {
+            // This account is the receiver - show as incoming (positive)
+            return {
+              ...baseTransaction,
+              amount: Math.abs(baseTransaction.amount),
+              description: `Transfer from ${this.formatIban(tx.accountFrom)}`,
+              perspective: 'receiver',
+              selfTransfer: true
+            };
+          }
+        }
+        
+        // Regular transaction - return as is
+        return baseTransaction;
+      });
     },
     applyClientSideFilters(transactions) {
       let filtered = [...transactions];
@@ -455,7 +563,22 @@ export default {
       if (transaction.type === 'DEPOSIT') {
         return { 'amount-positive': true };
       }
-      // For transfers, use the actual amount sign
+      // For self-transfers, use the amount sign directly (already processed correctly)
+      if (transaction.selfTransfer) {
+        return {
+          'amount-positive': transaction.amount > 0,
+          'amount-negative': transaction.amount < 0,
+        };
+      }
+      // For regular transfers, check if current user is sender or receiver
+      if (transaction.type === 'TRANSFER') {
+        const isOutgoing = this.isOutgoingTransfer(transaction);
+        return {
+          'amount-positive': !isOutgoing,
+          'amount-negative': isOutgoing,
+        };
+      }
+      // Fallback to amount sign
       return {
         'amount-positive': transaction.amount > 0,
         'amount-negative': transaction.amount < 0,
@@ -472,9 +595,25 @@ export default {
       if (transaction.type === 'DEPOSIT') {
         return `+€${amount.toFixed(2)}`;
       }
-      // For transfers, use the actual amount sign
+      // For self-transfers, use the amount sign directly (already processed correctly)
+      if (transaction.selfTransfer) {
+        const sign = transaction.amount >= 0 ? '+' : '-';
+        return `${sign}€${amount.toFixed(2)}`;
+      }
+      // For regular transfers, check if current user is sender or receiver
+      if (transaction.type === 'TRANSFER') {
+        const isOutgoing = this.isOutgoingTransfer(transaction);
+        const sign = isOutgoing ? '-' : '+';
+        return `${sign}€${amount.toFixed(2)}`;
+      }
+      // Fallback to amount sign
       const sign = transaction.amount >= 0 ? '+' : '-';
       return `${sign}€${amount.toFixed(2)}`;
+    },
+    isOutgoingTransfer(transaction) {
+      // Check if the fromAccount belongs to the current user
+      const userAccountIbans = this.accounts.map(account => account.iban);
+      return userAccountIbans.includes(transaction.fromAccount);
     },
     clearFilters() {
       this.selectedAccount = '';

@@ -25,20 +25,20 @@
           <!-- Regular Login Navigation -->
           <template v-if="isLoggedIn && !isATM">
             <li class="nav-item">
-              <router-link to="/Overview" class="nav-link">
-                Overview
-              </router-link>
-            </li>
+            <router-link to="/Overview" class="nav-link">
+              Overview
+            </router-link>
+          </li>
             <li class="nav-item">
-              <router-link to="/transactions" class="nav-link">
-                Transaction History
-              </router-link>
-            </li>
+            <router-link to="/transactions" class="nav-link">
+              Transaction History
+            </router-link>
+          </li>
             <li class="nav-item">
-              <router-link to="/transfer" class="nav-link">
-                Transfer Funds
-              </router-link>
-            </li>
+            <router-link to="/transfer" class="nav-link">
+              Transfer Funds
+            </router-link>
+          </li>
             <li class="nav-item">
               <router-link to="/account-details" class="nav-link">
                 Account Details
@@ -49,10 +49,10 @@
           <!-- ATM Login Navigation -->
           <template v-else-if="isLoggedIn && isATM">
             <li class="nav-item">
-              <router-link to="/atm-operations" class="nav-link">
-                ATM Operations
-              </router-link>
-            </li>
+            <router-link to="/atm-operations" class="nav-link">
+              ATM Operations
+            </router-link>
+          </li>
           </template>
           
           <!-- Single Logout button for all logged in users (both ATM and regular) -->
@@ -104,7 +104,7 @@ export default {
     // Use storeToRefs to make store state reactive
     const { isLoggedIn, isATM, userId, role } = storeToRefs(store);
     
-    return { 
+    return {
       store,
       isLoggedIn,
       isATM,

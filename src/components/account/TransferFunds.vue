@@ -24,27 +24,27 @@
 
         <div class="card-content">
           <form @submit.prevent="handleTransfer" class="transfer-form">
-            <!-- From Account Selection -->
+          <!-- From Account Selection -->
             <div class="form-group">
               <label class="form-label">
                 <i class="fas fa-university me-2"></i>
                 From Account
               </label>
               <div class="select-wrapper">
-                <select
-                  v-model="fromAccount"
-                  class="form-select"
-                  required
-                >
-                  <option value="">Select your account</option>
-                  <option
-                    v-for="account in userAccounts"
-                    :key="account.iban"
-                    :value="account.iban"
-                  >
+            <select
+              v-model="fromAccount"
+              class="form-select"
+              required
+            >
+              <option value="">Select your account</option>
+              <option
+                v-for="account in userAccounts"
+                :key="account.iban"
+                :value="account.iban"
+              >
                     {{ account.accountType }} - {{ formatIban(account.iban) }} (€{{ account.balance.toFixed(2) }})
-                  </option>
-                </select>
+              </option>
+            </select>
                 <i class="fas fa-chevron-down select-icon"></i>
               </div>
               
@@ -61,30 +61,30 @@
                   </div>
                 </div>
               </div>
-            </div>
+          </div>
 
-            <!-- To Account Input -->
+          <!-- To Account Input -->
             <div class="form-group">
               <label class="form-label">
                 <i class="fas fa-user me-2"></i>
                 To Account (IBAN)
               </label>
               <div class="input-wrapper">
-                <input
-                  type="text"
-                  v-model="toAccount"
+            <input
+              type="text"
+              v-model="toAccount"
                   class="form-input"
                   placeholder="NL91 ABNA 0417 1643 00"
-                  required
-                />
+              required
+            />
                 <i class="fas fa-credit-card input-icon"></i>
               </div>
               <div class="input-hint">
                 Enter the recipient's IBAN number
               </div>
-            </div>
+          </div>
 
-            <!-- Amount Input -->
+          <!-- Amount Input -->
             <div class="form-group">
               <label class="form-label">
                 <i class="fas fa-euro-sign me-2"></i>
@@ -92,20 +92,20 @@
               </label>
               <div class="amount-wrapper">
                 <div class="currency-symbol">€</div>
-                <input
-                  type="number"
-                  v-model="amount"
+              <input
+                type="number"
+                v-model="amount"
                   class="amount-input"
                   placeholder="0.00"
-                  step="0.01"
-                  min="0.01"
-                  required
-                />
-              </div>
+                step="0.01"
+                min="0.01"
+                required
+              />
+            </div>
               <div class="input-hint">
                 Minimum transfer amount: €0.01
               </div>
-            </div>
+          </div>
 
             <!-- Quick Amount Buttons -->
             <div class="quick-amounts">
@@ -121,19 +121,19 @@
                   €{{ quickAmount }}
                 </button>
               </div>
-            </div>
+          </div>
 
-            <!-- Error Messages -->
+          <!-- Error Messages -->
             <div v-if="error" class="alert alert-error">
               <i class="fas fa-exclamation-triangle me-2"></i>
-              {{ error }}
-            </div>
+            {{ error }}
+          </div>
 
-            <!-- Success Message -->
+          <!-- Success Message -->
             <div v-if="success" class="alert alert-success">
               <i class="fas fa-check-circle me-2"></i>
-              {{ success }}
-            </div>
+            {{ success }}
+          </div>
 
             <!-- Transfer Summary -->
             <div v-if="fromAccount && toAccount && amount" class="transfer-summary">
@@ -152,7 +152,7 @@
               </div>
             </div>
 
-            <!-- Submit Button -->
+          <!-- Submit Button -->
             <button 
               type="submit" 
               class="submit-btn"
@@ -167,8 +167,8 @@
                 <i class="fas fa-paper-plane me-2"></i>
                 Send Transfer
               </span>
-            </button>
-          </form>
+          </button>
+        </form>
         </div>
       </div>
 
