@@ -14,6 +14,9 @@
               <button class="btn btn-primary" @click="$router.push('/')">
                 Go to Home
               </button>
+              <button class="btn btn-success" @click="$router.push('/login')">
+                Login
+              </button>
             </div>
           </div>
         </div>

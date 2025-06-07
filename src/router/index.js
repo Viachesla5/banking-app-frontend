@@ -37,6 +37,10 @@ router.beforeEach((to, from, next) => {
   // Define which paths require auth and what role they require
   const protectedRoutes = {
     "/Overview": "ROLE_CUSTOMER",
+    "/atm-operations": "ROLE_CUSTOMER",
+    "/transactions": "ROLE_CUSTOMER",
+    "/account-details": "ROLE_CUSTOMER",
+    "/transfer": "ROLE_CUSTOMER",
   };
 
   const requiredRole = protectedRoutes[to.path];
@@ -45,7 +49,7 @@ router.beforeEach((to, from, next) => {
   if (requiredRole) {
     if (!token) {
       // User is not logged in
-      next("NotFound");
+      next("/NotFound");
     } else if (role !== requiredRole) {
       // Logged in but wrong role
       next("/Unauthorized");
