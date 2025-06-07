@@ -68,12 +68,8 @@
             <strong>Daily Limit:</strong> €{{ account.dailyLimit }}
           </p>
           <p class="card-text">
-            <strong>Absolute Withdrawal Limit:</strong>
+            <strong>Absolute Limit:</strong>
             €{{ account.absolutelyLimit }}
-          </p>
-          <p class="card-text">
-            <strong>Deposit Limit:</strong>
-            €{{ account.absoluteDepositLimit }}
           </p>
         </div>
       </div>
