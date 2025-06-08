@@ -284,7 +284,12 @@ export default {
               this.errorMessage = validationErrors.message || "Please check your input data and try again.";
             }
           } else {
-            this.errorMessage = error.response.data || "Please check your input data and try again.";
+            // Handle raw string responses safely
+            if (typeof error.response.data === 'string') {
+              this.errorMessage = error.response.data;
+            } else {
+              this.errorMessage = "Please check your input data and try again.";
+            }
           }
         } else if (error.code === "ERR_NETWORK") {
           this.errorMessage = "Cannot connect to the server. Please check if the backend is running and try again.";

@@ -270,7 +270,11 @@ export default {
           "/transactions",
           request
         );
-        this.success = response.data;
+        
+        // Create user-friendly success message
+        const formattedAmount = parseFloat(this.amount).toFixed(2);
+        const formattedToIban = this.formatIban(this.toAccount);
+        this.success = `Transfer successful! €${formattedAmount} has been sent to ${formattedToIban}`;
 
         // Reset form
         this.fromAccount = "";
@@ -292,7 +296,14 @@ export default {
               this.error = "Account not found. Please check the IBAN number.";
               break;
             case 400:
-              this.error = error.response.data || "Invalid transfer details.";
+              // Handle raw JSON response from backend
+              if (typeof error.response.data === 'object' && error.response.data.message) {
+                this.error = error.response.data.message;
+              } else if (typeof error.response.data === 'string') {
+                this.error = error.response.data;
+              } else {
+                this.error = "Invalid transfer details.";
+              }
               break;
             case 403:
               this.error = "Insufficient funds or transfer limit exceeded.";
